@@ -1,0 +1,39 @@
+{
+  "project_info": {
+    "project_number": "1022041750637",
+    "project_id": "digigarden-34cb9",
+    "storage_bucket": "digigarden-34cb9.appspot.com"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:1022041750637:android:dde3bfbf2a471e6fbc9364",
+        "android_client_info": {
+          "package_name": "com.example.digigarden_demo"
+        }
+      },
+      "oauth_client": [
+        {
+          "client_id": "1022041750637-9hsuv5e80n1k7rqifq4101ld6emol8jq.apps.googleusercontent.com",
+          "client_type": 3
+        }
+      ],
+      "api_key": [
+        {
+          "current_key": "AIzaSyDJOmE6IpFG-1gS4takBDvwAe7jM65j-vE"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": [
+            {
+              "client_id": "1022041750637-9hsuv5e80n1k7rqifq4101ld6emol8jq.apps.googleusercontent.com",
+              "client_type": 3
+            }
+          ]
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}
