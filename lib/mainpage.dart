@@ -5,7 +5,8 @@ import 'accountpage.dart';
 
 
 class MainPage extends StatefulWidget {
-  const MainPage({super.key});
+  const MainPage({super.key, required this.index});
+  final int index;
   @override
   State<MainPage> createState() => _MainPageState();
   }
@@ -19,12 +20,22 @@ class _MainPageState extends State<MainPage> {
     AccountPage(),
   ];
 
+
   int _selectedIndex = 0;
 
   void _onItemTapped(int index) {
     setState(() {
       _selectedIndex = index;
     });
+  }
+
+  void _assignIndex(){
+    _selectedIndex = widget.index;
+  }
+
+  @override
+  void initState(){
+    _assignIndex();
   }
 
 

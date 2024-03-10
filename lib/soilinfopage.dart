@@ -35,6 +35,11 @@ class _SoilInfoPageState extends State<SoilInfoPage> {
               child:Column(
                 mainAxisAlignment: MainAxisAlignment.spaceEvenly,
                 children: <Widget>[
+                  Center(
+                    child:Text("Azot Yüzdesi", style: TextStyle(fontSize: 25, fontWeight: FontWeight.bold),),
+
+                  ),
+                  SizedBox(height: 20,),
                   CircularPercentIndicator(
                     animation: true,
                     animationDuration: 1000,
@@ -221,7 +226,7 @@ class _SoilInfoPageState extends State<SoilInfoPage> {
                               crossAxisAlignment: CrossAxisAlignment.start,
                               children: [
                                 Text(
-                                    "Azot Yüzdesi"!,
+                                    "Nem Yüzdesi"!,
                                     maxLines: 2,
                                     overflow: TextOverflow.ellipsis,
                                     style: const TextStyle(
@@ -231,7 +236,7 @@ class _SoilInfoPageState extends State<SoilInfoPage> {
                                 ),
                                 const SizedBox(height: 10.0),
                                 Text(
-                                    "${widget.soil.toString().contains('nitrogenPercent') ? widget.soil["nitrogenPercent"]:''}%"!,
+                                    "${widget.soil.toString().contains('moistPercent') ? widget.soil["moistPercent"]:''}%"!,
                                     maxLines: 2,
                                     overflow: TextOverflow.ellipsis,
                                     style: const TextStyle(

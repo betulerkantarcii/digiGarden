@@ -3,7 +3,6 @@ import 'package:flutter/material.dart';
 import 'package:flutter_slidable/flutter_slidable.dart';
 import 'landinfopage.dart';
 import 'dart:convert';
-
 import 'landsmappage.dart';
 
 
@@ -29,6 +28,7 @@ class _LandPageState extends State<LandPage> {
       backgroundColor: Colors.brown[100],
       appBar: AppBar(
         title: const Text("Parsellerim", style:TextStyle(fontSize: 25)),
+        automaticallyImplyLeading: false,
       ),
       body: StreamBuilder(
         stream: landsInfo.snapshots(),

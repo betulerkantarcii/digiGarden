@@ -13,14 +13,16 @@ import 'soilsamplepage.dart';
 import 'package:syncfusion_flutter_charts/charts.dart';
 import 'package:intl/intl.dart';
 import 'package:liquid_pull_to_refresh/liquid_pull_to_refresh.dart';
+import 'flutter_blue_app.dart';
 
 
 class GraphData{
   final String dt;
   final int np;
+  final int mp;
   final DateTime date;
 
-  GraphData(this.dt, this.np, this.date);
+  GraphData(this.dt, this.np, this.mp, this.date);
 }
 
 class LandInfoPage extends StatefulWidget {
@@ -133,8 +135,8 @@ class _LandInfoPageState extends State<LandInfoPage> {
       zoom: 18,
     );
 
-
   }
+
    boundsData() {
      var lngs = _landPoints.map<double>((m) => m.longitude).toList();
      var lats = _landPoints.map<double>((m) => m.latitude).toList();
@@ -168,8 +170,11 @@ class _LandInfoPageState extends State<LandInfoPage> {
             final int np = docData.toString().contains('nitrogenPercent')
                 ? docData['nitrogenPercent']
                 : 0;
+            final int mp = docData.toString().contains('moistPercent')
+                ? docData['moistPercent']
+                : 0;
             if(dt.year > 2022) {
-              dataGraph.add(GraphData(date, np, dt));
+              dataGraph.add(GraphData(date, np, mp, dt));
             }
           }
         });
@@ -485,11 +490,56 @@ class _LandInfoPageState extends State<LandInfoPage> {
 
                             ],
                           ),
+
+                        ),
+                        SizedBox(height: 10,),
+                        Container(
+                          margin: const EdgeInsets.symmetric(horizontal: 10.0),
+                          padding: const EdgeInsets.all(10.0),
+                          decoration: BoxDecoration(
+                              borderRadius: BorderRadius.circular(10.0),
+                              color: Colors.white,
+                              boxShadow: [
+                                BoxShadow(
+                                    blurRadius: 1.0,
+                                    spreadRadius: 1.0,
+                                    color: Colors.grey[400]!
+                                ),
+                              ]
+                          ),
+                          child: SfCartesianChart(
+                            backgroundColor: Colors.white,
+                            palette: [Colors.lightGreen],
+                            primaryXAxis: CategoryAxis(),
+                            title: ChartTitle(text: 'Nem-Zaman Grafiği', textStyle: TextStyle(fontWeight: FontWeight.bold)),
+                            legend: Legend(isVisible: true),
+                            tooltipBehavior: TooltipBehavior(enable: true),
+                            series: <ChartSeries<GraphData, String>>[
+                              LineSeries<GraphData, String>(
+                                width: 3,
+                                dataSource: dataGraph,
+                                xValueMapper: (GraphData dataG, _) => dataG.dt,
+                                yValueMapper: (GraphData dataG, _) => dataG.mp,
+                                name: 'Nem %',
+                                markerSettings: const MarkerSettings(
+                                    isVisible: true,
+                                    height: 4,
+                                    width: 4,
+                                    shape: DataMarkerType.circle,
+                                    borderWidth: 3,
+                                    borderColor: Colors.brown),
+                                dataLabelSettings: DataLabelSettings(isVisible: true),
+                              ),
+
+                            ],
+                          ),
+
                         ),
                         SizedBox(height: 100,),
                       ]),
                 ),
               ),
+            /*
             floatingActionButton: FloatingActionButton.extended(
               elevation: 4.0,
               icon: const Icon(Icons.add),
@@ -498,8 +548,18 @@ class _LandInfoPageState extends State<LandInfoPage> {
                 Navigator.push( context, MaterialPageRoute( builder: (context) => SoilSamplePage(land: land, bounds: bounds, sampleNo: data['sampleNo'])), ).then((value) => setState(() {
                   _handleRefresh();
                 }));
-
                 },
+            ),
+             */
+            floatingActionButton: FloatingActionButton.extended(
+              elevation: 4.0,
+              icon: const Icon(Icons.add),
+              label: const Text('Azot Ölçüm Sensörüne Bağlan'),
+              onPressed: () {
+                Navigator.push( context, MaterialPageRoute( builder: (context) => FlutterBlueApp(land: land, bounds: bounds, sampleNo: data['sampleNo'])),).then((value) => setState(() {
+                  _handleRefresh();
+                }));
+              },
             ),
             floatingActionButtonLocation:
               FloatingActionButtonLocation.centerDocked,
