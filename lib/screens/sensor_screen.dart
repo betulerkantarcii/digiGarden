@@ -5,6 +5,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_blue_plus/flutter_blue_plus.dart';
 import 'record_screen.dart';
 import 'package:google_maps_flutter/google_maps_flutter.dart';
+import 'package:location/location.dart';
 
 class SensorScreen extends StatefulWidget {
   final BluetoothDevice device;
@@ -24,6 +25,7 @@ class _SensorScreenState extends State<SensorScreen> {
   late bool isReady;
   late Stream<List<int>> stream;
   List<double> traceCapacitance = [];
+  late LocationData locationData;
 
   @override
   void initState() {
@@ -115,6 +117,34 @@ class _SensorScreenState extends State<SensorScreen> {
     return utf8.decode(dataFromDevice);
   }
 
+
+  Future<bool> _onWrongLoc() async{
+    return await showDialog(
+      context: context,
+      builder: (context) => AlertDialog(
+        title: Text('Ölçüm Başlatılamıyor'),
+        content: Text('Ölçüm yapabilmemiz için tarlanızın sınırları içinde olmanız gerekir!'),
+        actions: <Widget>[
+          ElevatedButton(
+            onPressed: () => Navigator.of(context).pop(false),
+            child: Text('Tamam'),
+          ),
+        ],
+      ),
+    ) ?? false;
+  }
+
+  _getLocation() async{
+    Location location = Location();
+    locationData = await location.getLocation();
+    double? lat = locationData.latitude;
+    double? long = locationData.longitude;
+    lat = double.parse(lat!.toStringAsFixed(5));
+    long = double.parse(long!.toStringAsFixed(5));
+    var _point = LatLng(lat!, long!);
+    return _point;
+  }
+
   @override
   Widget build(BuildContext context) {
 
@@ -168,11 +198,17 @@ class _SensorScreenState extends State<SensorScreen> {
                             Expanded(
                               flex: 1,
                               child:ElevatedButton(
-                                    onPressed: () {
-                                      Navigator.push(
-                                        context,
-                                        MaterialPageRoute(builder: (context) => RecordScreen(device: widget.device,stream: stream, land: widget.land, bounds: widget.bounds, sampleNo: widget.sampleNo)),
-                                      );
+                                    onPressed: () async{
+                                      var _point = await _getLocation();
+                                      if (widget.bounds.contains(_point) == true) {
+                                        Navigator.push(
+                                          context,
+                                          MaterialPageRoute(builder: (context) => RecordScreen(device: widget.device,stream: stream, land: widget.land, locationData: locationData, sampleNo: widget.sampleNo)),
+                                        );
+                                      }
+                                      else {
+                                        _onWrongLoc();
+                                      }
                                     },
                                     child: Text('Ölçüme Başla'),
                                 ),

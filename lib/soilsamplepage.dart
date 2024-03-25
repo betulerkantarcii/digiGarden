@@ -5,13 +5,14 @@ import 'package:flutter/services.dart';
 import 'package:google_maps_flutter/google_maps_flutter.dart';
 import 'package:intl/intl.dart';
 import 'mainpage.dart';
+import 'package:location/location.dart';
 
 class SoilSamplePage extends StatefulWidget {
   final land;
-  final LatLngBounds bounds;
+  final LocationData locationData;
   final sampleNo;
   final nitrogenPercent;
-  const SoilSamplePage({super.key, required this.land, required this.bounds, required this.sampleNo, required this.nitrogenPercent});
+  const SoilSamplePage({super.key, required this.land, required this.locationData, required this.sampleNo, required this.nitrogenPercent});
   @override
   State<SoilSamplePage> createState() => _SoilSamplePageState();
 }
@@ -19,8 +20,6 @@ class SoilSamplePage extends StatefulWidget {
 class _SoilSamplePageState extends State<SoilSamplePage> {
 
   TextEditingController _soilName = new TextEditingController();
-  TextEditingController _pointLat = new TextEditingController();
-  TextEditingController _pointLong = new TextEditingController();
   TextEditingController _moist = new TextEditingController();
   TextEditingController _product = new TextEditingController();
 
@@ -30,8 +29,6 @@ class _SoilSamplePageState extends State<SoilSamplePage> {
   bool allowDecimal=true;
 
   bool _validatesoilName = false;
-  bool _validatepointLat = false;
-  bool _validatepointLong = false;
   bool _validateMoist = false;
   bool _validateProduct = false;
   String _moistCheck = "Bu alanı doldurunuz";
@@ -42,7 +39,6 @@ class _SoilSamplePageState extends State<SoilSamplePage> {
   @override
   void initState() {
     // TODO: implement initState
-    print(widget.nitrogenPercent);
     super.initState();
   }
 
@@ -82,48 +78,23 @@ class _SoilSamplePageState extends State<SoilSamplePage> {
               const Text('Koordinatlar', style: TextStyle(fontSize: 20, color: Colors.black54)),
               Padding(
                 padding: const EdgeInsets.all(15.0),
-                child: TextField(
-                  controller: _pointLat,
-                  keyboardType: TextInputType.numberWithOptions(decimal: allowDecimal),
-                  inputFormatters: <TextInputFormatter>[
-                    FilteringTextInputFormatter.allow(RegExp(_getRegexString())),
-                    TextInputFormatter.withFunction(
-                          (oldValue, newValue) => newValue.copyWith(
-                        text: newValue.text.replaceAll(',', '.'),),
-                    ),
-                  ],
-                  style: TextStyle(fontSize: 20),
-                  decoration:  InputDecoration(
-                      border: OutlineInputBorder(),
-                      labelText: 'Enlem',
-                      errorText: _validatepointLat?_coordInfo:null,
-                  ),
-                ),
-              ),
-              Padding(
-                padding: const EdgeInsets.all(15.0),
-                child: TextField(
-                  controller: _pointLong,
+                child: Text(
+                  ("Enlem: "+ widget.locationData.latitude!.toStringAsFixed(5)),
                   style: const TextStyle(fontSize: 20),
-                    keyboardType: TextInputType.numberWithOptions(decimal: allowDecimal),
-                    inputFormatters: <TextInputFormatter>[
-                    FilteringTextInputFormatter.allow(RegExp(_getRegexString())),
-                    TextInputFormatter.withFunction(
-                      (oldValue, newValue) => newValue.copyWith(
-                      text: newValue.text.replaceAll(',', '.'),),
-                      ),
-                    ],
-                  decoration: InputDecoration(
-                      border: OutlineInputBorder(),
-                      labelText: 'Boylam',
-                      errorText: _validatepointLong?_coordInfo:null,
-                  ),
                 ),
               ),
               Padding(
                 padding: const EdgeInsets.all(15.0),
                 child: Text(
-                  ("Azot Yüzdesi " + widget.nitrogenPercent.toString() + "%"),
+                  ("Boylam: " + widget.locationData.longitude!.toStringAsFixed(5)),
+                  style: const TextStyle(fontSize: 20),
+                ),
+              ),
+              const Text('Azot', style: TextStyle(fontSize: 20, color: Colors.black54)),
+              Padding(
+                padding: const EdgeInsets.all(15.0),
+                child: Text(
+                  ("Azot Yüzdesi: " + widget.nitrogenPercent.toString() + "%"),
                   style: const TextStyle(fontSize: 20),
                 ),
               ),
@@ -167,8 +138,6 @@ class _SoilSamplePageState extends State<SoilSamplePage> {
               ElevatedButton(onPressed: () async{
                 setState(() {
                   _soilName.text.isEmpty ? _validatesoilName = true :  _validatesoilName = false;
-                  _pointLat.text.isEmpty ? _validatepointLat = true :  _validatepointLat = false;
-                  _pointLong.text.isEmpty ? _validatepointLong = true :  _validatepointLong = false;
                   _moist.text.isEmpty ? _validateMoist = true :  _validateMoist = false;
                   _product.text.isEmpty ? _validateProduct = true :  _validateProduct = false;
 
@@ -184,25 +153,15 @@ class _SoilSamplePageState extends State<SoilSamplePage> {
                     }
                   }
 
-                  if(_pointLat.text.isNotEmpty && _pointLong.text.isNotEmpty) {
-                    var _point = LatLng(double.parse(_pointLat.text), double.parse(_pointLong.text));
-                    if (widget.bounds.contains(_point) == true ) {
-                      _validatepointLat = false;
-                      _validatepointLong = false;
-                    }
-                    else {
-                      _coordInfo= "Toprak örneği koordinatları parsel alanı içinde değil!";
-                      _validatepointLat = true;
-                      _validatepointLong = true;
-                    }
-                  }
-
                 });
-                if(_validatesoilName==false && _validatepointLat==false && _validatepointLong==false && _validateMoist==false && _validateProduct==false) {
+                if(_validatesoilName==false && _validateMoist==false && _validateProduct==false) {
                   var _date = Timestamp.fromMillisecondsSinceEpoch(
                       _selectedDateTime.millisecondsSinceEpoch);
-                  var _geopoint = GeoPoint(double.parse(_pointLat.text),
-                      double.parse(_pointLong.text));
+                  double? lat = widget.locationData.latitude;
+                  double? long = widget.locationData.longitude;
+                  lat = double.parse(lat!.toStringAsFixed(5));
+                  long = double.parse(long!.toStringAsFixed(5));
+                  var _geopoint = GeoPoint(lat, long);
                   Map<String, dynamic> dataToSave = <String, dynamic>{
                     'date': _date,
                     'name': _soilName.text,

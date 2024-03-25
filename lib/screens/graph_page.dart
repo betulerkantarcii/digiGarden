@@ -4,7 +4,7 @@ import 'package:flutter_blue_plus/flutter_blue_plus.dart';
 import 'package:digigarden_demo/mainpage.dart';
 import 'package:google_maps_flutter/google_maps_flutter.dart';
 import 'package:tflite_flutter/tflite_flutter.dart' as tfl;
-
+import 'package:location/location.dart';
 import '../soilsamplepage.dart';
 
 
@@ -12,9 +12,9 @@ class GraphPage extends StatefulWidget {
   final List<double> recordedValues;
   final BluetoothDevice device;
   final land;
-  final LatLngBounds bounds;
+  final LocationData locationData;
   final sampleNo;
-  const GraphPage({Key? key, required this.device, required this.recordedValues, required this.land, required this.bounds, required this.sampleNo}) : super(key: key);
+  const GraphPage({Key? key, required this.device, required this.recordedValues, required this.land, required this.locationData, required this.sampleNo}) : super(key: key);
 
 
   @override
@@ -119,7 +119,7 @@ class _GraphPageState extends State<GraphPage> {
                 onPressed: () {
                   widget.device.disconnect();
                   Navigator.push(context,
-                      MaterialPageRoute(builder: (context) {return SoilSamplePage(land: widget.land, bounds: widget.bounds, sampleNo: widget.sampleNo, nitrogenPercent: nitrogenPercent);}));
+                      MaterialPageRoute(builder: (context) {return SoilSamplePage(land: widget.land, locationData: widget.locationData, sampleNo: widget.sampleNo, nitrogenPercent: nitrogenPercent);}));
                 },
                 child: Text('Ölçümü Ekle'),
               ),

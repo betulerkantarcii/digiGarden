@@ -3,15 +3,15 @@ import 'dart:async';
 import 'graph_page.dart';
 import 'package:flutter_blue_plus/flutter_blue_plus.dart';
 import 'dart:convert' show utf8;
-import 'package:google_maps_flutter/google_maps_flutter.dart';
+import 'package:location/location.dart';
 
 class RecordScreen extends StatefulWidget {
   final Stream<List<int>> stream;
   final BluetoothDevice device;
   final land;
-  final LatLngBounds bounds;
+  final LocationData locationData;
   final sampleNo;
-  const RecordScreen({Key? key, required this.device, required this.stream,required this.land, required this.bounds, required this.sampleNo}) : super(key: key);
+  const RecordScreen({Key? key, required this.device, required this.stream,required this.land, required this.locationData, required this.sampleNo}) : super(key: key);
 
   @override
   State<RecordScreen> createState() => _RecordScreenState();
@@ -61,7 +61,7 @@ class _RecordScreenState extends State<RecordScreen> {
     Navigator.push(
       context,
       MaterialPageRoute(
-        builder: (context) => GraphPage(device: widget.device, recordedValues: recordedValues, land: widget.land, bounds: widget.bounds, sampleNo: widget.sampleNo),
+        builder: (context) => GraphPage(device: widget.device, recordedValues: recordedValues, land: widget.land, locationData: widget.locationData, sampleNo: widget.sampleNo),
       ),
     );
   }

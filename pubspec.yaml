@@ -53,6 +53,7 @@ dependencies:
   flutter_localization: ^0.2.0
   flutter_blue_plus: ^1.31.15
   tflite_flutter: ^0.10.4
+  location: ^5.0.3
 
 
 dev_dependencies:
